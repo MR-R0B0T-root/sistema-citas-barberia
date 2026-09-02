@@ -50,7 +50,6 @@ function FormularioCita({
       .replace(/\s+/g, ' ')
 
     const correoNormalizado = datosCliente.correo.trim().toLowerCase()
-
     const telefonoNormalizado = datosCliente.telefono.replace(/\D/g, '')
 
     if (!nombreNormalizado) {
@@ -88,7 +87,7 @@ function FormularioCita({
       return
     }
 
-    onRegistrarCita({
+    const registroExitoso = onRegistrarCita({
       cliente: {
         nombre: datosCliente.nombre.trim().replace(/\s+/g, ' '),
         correo: datosCliente.correo.trim().toLowerCase(),
@@ -98,6 +97,10 @@ function FormularioCita({
       fecha: fechaSeleccionada,
       horario: horarioSeleccionado,
     })
+
+    if (!registroExitoso) {
+      return
+    }
 
     setDatosCliente(datosIniciales)
     setErrores({})

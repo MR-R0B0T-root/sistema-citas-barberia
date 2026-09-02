@@ -30,35 +30,59 @@ function App() {
   const [fechaSeleccionada, setFechaSeleccionada] = useState('')
   const [horarioSeleccionado, setHorarioSeleccionado] = useState('')
   const [citas, setCitas] = useState(obtenerCitasGuardadas)
+  const [errorDisponibilidad, setErrorDisponibilidad] = useState('')
 
   const servicioElegido =
-    servicios.find((servicio) => servicio.id === servicioSeleccionado) ?? null
+    servicios.find(
+      (servicio) => servicio.id === servicioSeleccionado,
+    ) ?? null
 
   function registrarCita(nuevaCita) {
+    const citasGuardadas = obtenerCitasGuardadas()
+
+    const horarioOcupado = citasGuardadas.some(
+      (cita) =>
+        cita.fecha === nuevaCita.fecha &&
+        cita.horario === nuevaCita.horario,
+    )
+
+    if (horarioOcupado) {
+      setErrorDisponibilidad(
+        'El horario seleccionado acaba de ser ocupado. Elige otro horario.',
+      )
+
+      setCitas(citasGuardadas)
+      setHorarioSeleccionado('')
+
+      return false
+    }
+
     const citaCompleta = {
       ...nuevaCita,
       id: crypto.randomUUID(),
       fechaRegistro: new Date().toISOString(),
     }
 
-    setCitas((citasActuales) => {
-      const citasActualizadas = [...citasActuales, citaCompleta]
+    const citasActualizadas = [...citasGuardadas, citaCompleta]
 
-      localStorage.setItem(CLAVE_CITAS, JSON.stringify(citasActualizadas))
-
-      return citasActualizadas
-    })
+    localStorage.setItem(CLAVE_CITAS, JSON.stringify(citasActualizadas))
+    setCitas(citasActualizadas)
+    setErrorDisponibilidad('')
 
     setServicioSeleccionado(null)
     setFechaSeleccionada('')
     setHorarioSeleccionado('')
+
+    return true
   }
 
   return (
     <main className="app">
       <header>
         <p className="app__etiqueta">Reserva en línea</p>
+
         <h1>Sistema Web de Gestión de Citas</h1>
+
         <p>
           Consulta nuestros servicios y comienza la reservación de tu próxima
           cita.
@@ -73,11 +97,18 @@ function App() {
 
       <SelectorHorario
         horarios={horarios}
+        citas={citas}
         fechaSeleccionada={fechaSeleccionada}
         horarioSeleccionado={horarioSeleccionado}
         onSeleccionarFecha={setFechaSeleccionada}
         onSeleccionarHorario={setHorarioSeleccionado}
       />
+
+      {errorDisponibilidad && (
+        <p className="app__error-disponibilidad" role="alert">
+          {errorDisponibilidad}
+        </p>
+      )}
 
       <FormularioCita
         servicio={servicioElegido}

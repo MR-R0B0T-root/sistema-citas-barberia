@@ -11,6 +11,7 @@ function obtenerFechaLocal() {
 
 function SelectorHorario({
   horarios,
+  citas,
   fechaSeleccionada,
   horarioSeleccionado,
   onSeleccionarFecha,
@@ -18,6 +19,9 @@ function SelectorHorario({
 }) {
   const fechaMinima = obtenerFechaLocal()
   const [errorFecha, setErrorFecha] = useState('')
+  const horariosOcupados = citas
+  .filter((cita) => cita.fecha === fechaSeleccionada)
+  .map((cita) => cita.horario)
 
   function manejarCambioFecha(evento) {
     const nuevaFecha = evento.target.value
@@ -77,18 +81,21 @@ function SelectorHorario({
           >
             {horarios.map((horario) => {
               const estaSeleccionado = horarioSeleccionado === horario
+              const estaOcupado = horariosOcupados.includes(horario)
 
               return (
                 <button
                   type="button"
                   className={`horario ${
                     estaSeleccionado ? 'horario--seleccionado' : ''
+                  } ${estaOcupado ? 'horario--ocupado' : ''}
                   }`}
                   aria-pressed={estaSeleccionado}
+                  disabled={estaOcupado}
                   onClick={() => onSeleccionarHorario(horario)}
                   key={horario}
                 >
-                  {horario}
+                  {estaOcupado ? `${horario} · Ocupado` : horario}
                 </button>
               )
             })}

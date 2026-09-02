@@ -544,3 +544,23 @@
     grid-column: auto;
   }
 }
+
+.horario--ocupado,
+.horario--ocupado:hover {
+  cursor: not-allowed;
+  border-color: rgb(234, 0, 255);
+  color: #fda4af;
+  background: rgba(104, 29, 127, 0.856);
+  opacity: 0.72;
+  transform: none;
+}
+
+.app__error-disponibilidad {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgb(234, 0, 255);
+  border-radius: var(--radius-small);
+  color: #fecdd3;
+  background: rgba(127, 29, 29, 0.3);
+  font-weight: 700;
+}
