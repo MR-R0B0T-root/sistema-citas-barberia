@@ -11,7 +11,7 @@ export const servicios = [
     nombre: 'Corte y barba',
     descripcion: 'Servicio completo de corte, arreglo de barba y acabado.',
     precio: 280,
-    duracion: 60,
+    duracion: 120,
   },
   {
     id: 'arreglo-barba',

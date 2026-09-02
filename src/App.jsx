@@ -1,10 +1,16 @@
 import { useState } from 'react'
 import CatalogoServicios from './components/CatalogoServicios'
+import SelectorHorario from './components/SelectorHorario'
+import { generarHorarios } from './data/horarios'
 import { servicios } from './data/servicios'
 import './App.css'
 
+const horarios = generarHorarios()
+
 function App() {
   const [servicioSeleccionado, setServicioSeleccionado] = useState(null)
+  const [fechaSeleccionada, setFechaSeleccionada] = useState('')
+  const [horarioSeleccionado, setHorarioSeleccionado] = useState('')
 
   return (
     <main className="app">
@@ -17,10 +23,18 @@ function App() {
         </p>
       </header>
 
-      <CatalogoServicios
+            <CatalogoServicios
         servicios={servicios}
         servicioSeleccionado={servicioSeleccionado}
         onSeleccionarServicio={setServicioSeleccionado}
+      />
+
+      <SelectorHorario
+        horarios={horarios}
+        fechaSeleccionada={fechaSeleccionada}
+        horarioSeleccionado={horarioSeleccionado}
+        onSeleccionarFecha={setFechaSeleccionada}
+        onSeleccionarHorario={setHorarioSeleccionado}
       />
     </main>
   )
