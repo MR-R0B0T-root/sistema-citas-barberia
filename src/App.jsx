@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import CatalogoServicios from './components/CatalogoServicios'
+import ConfirmacionCita from './components/ConfirmacionCita'
 import FormularioCita from './components/FormularioCita'
 import SelectorHorario from './components/SelectorHorario'
 import { generarHorarios } from './data/horarios'
 import { servicios } from './data/servicios'
+import { enviarConfirmacionCita } from './services/emailService'
 import './App.css'
 
 const horarios = generarHorarios()
@@ -31,11 +33,30 @@ function App() {
   const [horarioSeleccionado, setHorarioSeleccionado] = useState('')
   const [citas, setCitas] = useState(obtenerCitasGuardadas)
   const [errorDisponibilidad, setErrorDisponibilidad] = useState('')
+  const [ultimaCita, setUltimaCita] = useState(null)
+  const [estadoCorreo, setEstadoCorreo] = useState('inactivo')
 
   const servicioElegido =
     servicios.find(
       (servicio) => servicio.id === servicioSeleccionado,
     ) ?? null
+
+  function enviarCorreoConfirmacion(cita) {
+    setEstadoCorreo('enviando')
+
+    enviarConfirmacionCita(cita)
+      .then(() => {
+        setEstadoCorreo('enviado')
+      })
+      .catch((error) => {
+        console.error(
+          'No se pudo enviar el correo de confirmación:',
+          error,
+        )
+
+        setEstadoCorreo('error')
+      })
+  }
 
   function registrarCita(nuevaCita) {
     const citasGuardadas = obtenerCitasGuardadas()
@@ -65,15 +86,31 @@ function App() {
 
     const citasActualizadas = [...citasGuardadas, citaCompleta]
 
-    localStorage.setItem(CLAVE_CITAS, JSON.stringify(citasActualizadas))
+    localStorage.setItem(
+      CLAVE_CITAS,
+      JSON.stringify(citasActualizadas),
+    )
+
     setCitas(citasActualizadas)
+    setUltimaCita(citaCompleta)
     setErrorDisponibilidad('')
 
     setServicioSeleccionado(null)
     setFechaSeleccionada('')
     setHorarioSeleccionado('')
 
+    enviarCorreoConfirmacion(citaCompleta)
+
     return true
+  }
+
+  function iniciarNuevaReserva() {
+    setUltimaCita(null)
+    setEstadoCorreo('inactivo')
+    setErrorDisponibilidad('')
+    setServicioSeleccionado(null)
+    setFechaSeleccionada('')
+    setHorarioSeleccionado('')
   }
 
   return (
@@ -89,33 +126,43 @@ function App() {
         </p>
       </header>
 
-      <CatalogoServicios
-        servicios={servicios}
-        servicioSeleccionado={servicioSeleccionado}
-        onSeleccionarServicio={setServicioSeleccionado}
-      />
+      {ultimaCita ? (
+        <ConfirmacionCita
+          cita={ultimaCita}
+          estadoCorreo={estadoCorreo}
+          onNuevaReserva={iniciarNuevaReserva}
+        />
+      ) : (
+        <>
+          <CatalogoServicios
+            servicios={servicios}
+            servicioSeleccionado={servicioSeleccionado}
+            onSeleccionarServicio={setServicioSeleccionado}
+          />
 
-      <SelectorHorario
-        horarios={horarios}
-        citas={citas}
-        fechaSeleccionada={fechaSeleccionada}
-        horarioSeleccionado={horarioSeleccionado}
-        onSeleccionarFecha={setFechaSeleccionada}
-        onSeleccionarHorario={setHorarioSeleccionado}
-      />
+          <SelectorHorario
+            horarios={horarios}
+            citas={citas}
+            fechaSeleccionada={fechaSeleccionada}
+            horarioSeleccionado={horarioSeleccionado}
+            onSeleccionarFecha={setFechaSeleccionada}
+            onSeleccionarHorario={setHorarioSeleccionado}
+          />
 
-      {errorDisponibilidad && (
-        <p className="app__error-disponibilidad" role="alert">
-          {errorDisponibilidad}
-        </p>
+          {errorDisponibilidad && (
+            <p className="app__error-disponibilidad" role="alert">
+              {errorDisponibilidad}
+            </p>
+          )}
+
+          <FormularioCita
+            servicio={servicioElegido}
+            fechaSeleccionada={fechaSeleccionada}
+            horarioSeleccionado={horarioSeleccionado}
+            onRegistrarCita={registrarCita}
+          />
+        </>
       )}
-
-      <FormularioCita
-        servicio={servicioElegido}
-        fechaSeleccionada={fechaSeleccionada}
-        horarioSeleccionado={horarioSeleccionado}
-        onRegistrarCita={registrarCita}
-      />
 
       <p className="app__contador">
         Citas registradas en este navegador: {citas.length}
