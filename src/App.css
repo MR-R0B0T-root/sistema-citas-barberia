@@ -346,3 +346,201 @@
 .horarios__fecha input[aria-invalid='true'] {
   border-color: #fb7185;
 }
+
+/* Registro de la cita */
+.registro {
+  margin-top: clamp(2rem, 5vw, 4rem);
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-large);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.registro__encabezado {
+  margin-bottom: 1.5rem;
+}
+
+.registro__etiqueta {
+  margin-bottom: 0.5rem;
+  color: var(--color-primary-light);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.registro__encabezado h2 {
+  margin: 0 0 0.5rem;
+  color: var(--color-text);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.15;
+}
+
+.registro__aviso {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-small);
+  background: rgba(15, 10, 26, 0.3);
+}
+
+.registro__resumen {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: rgba(15, 10, 26, 0.35);
+}
+
+.registro__resumen h3 {
+  margin: 0 0 1rem;
+  color: var(--color-text);
+  font-size: 1.125rem;
+}
+
+.registro__resumen dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.registro__resumen dl div {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+}
+
+.registro__resumen dt {
+  margin-bottom: 0.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.registro__resumen dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.registro__formulario {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.campo {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.campo:first-child {
+  grid-column: 1 / -1;
+}
+
+.campo label {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.campo input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: rgba(15, 10, 26, 0.65);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.campo input:hover:not(:disabled) {
+  border-color: var(--color-primary-light);
+}
+
+.campo input:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.campo input[aria-invalid='true'] {
+  border-color: #fb7185;
+}
+
+.campo__error {
+  margin: 0;
+  color: #fda4af;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.registro__boton {
+  grid-column: 1 / -1;
+  min-height: 3rem;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--radius-small);
+  color: #160b24;
+  background: var(--color-primary-light);
+  font-weight: 800;
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease,
+    opacity 180ms ease;
+}
+
+.registro__boton:hover:not(:disabled) {
+  background: var(--color-focus);
+  transform: translateY(-2px);
+}
+
+.registro__boton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.registro__boton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.app__contador {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: rgba(15, 10, 26, 0.35);
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .registro {
+    margin-top: 2rem;
+    padding: 1.25rem;
+    border-radius: var(--radius-medium);
+  }
+
+  .registro__resumen dl,
+  .registro__formulario {
+    grid-template-columns: 1fr;
+  }
+
+  .campo:first-child,
+  .registro__boton {
+    grid-column: auto;
+  }
+}
