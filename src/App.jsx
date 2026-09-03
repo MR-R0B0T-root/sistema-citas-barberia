@@ -6,6 +6,7 @@ import SelectorHorario from './components/SelectorHorario'
 import { generarHorarios } from './data/horarios'
 import { servicios } from './data/servicios'
 import { enviarConfirmacionCita } from './services/emailService'
+import { generarFolio } from './utils/generarFolio'
 import './App.css'
 
 const horarios = generarHorarios()
@@ -80,7 +81,7 @@ function App() {
 
     const citaCompleta = {
       ...nuevaCita,
-      id: crypto.randomUUID(),
+      id: generarFolio(),
       fechaRegistro: new Date().toISOString(),
     }
 
