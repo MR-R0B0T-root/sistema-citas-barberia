@@ -1,16 +1,97 @@
-# React + Vite
+# Sistema Web de Gestión de Citas para Barbería
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web desarrollada con React para gestionar el flujo básico de reservación de citas en una barbería.
 
-Currently, two official plugins are available:
+El proyecto fue realizado como parte de una actividad académica enfocada en la aplicación de la metodología Scrum. Durante el Sprint 1 se desarrolló un incremento funcional que permite consultar servicios, seleccionar una fecha y horario, registrar una cita, evitar reservaciones duplicadas y recibir una confirmación visual y por correo electrónico.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Objetivo del proyecto
 
-## React Compiler
+Desarrollar una aplicación web adaptable que permita al cliente completar el proceso básico de reservación de una cita para barbería desde una computadora o un teléfono celular.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Funcionalidades implementadas
 
-## Expanding the ESLint configuration
+### BAR-01 | Catálogo de servicios
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Consulta de servicios disponibles.
+- Visualización de nombre, descripción, precio y duración.
+- Selección visual de un servicio.
+- Distribución adaptable para diferentes tamaños de pantalla.
+
+### BAR-02 | Consulta de horarios
+
+- Selección de fecha.
+- Restricción de fechas anteriores al día actual.
+- Validación de fechas introducidas manualmente.
+- Generación automática de horarios de 10:00 a 18:00.
+- Selección visual de un horario.
+- Identificación de horarios previamente ocupados.
+
+### BAR-03 | Registro de cita
+
+- Formulario con nombre, correo electrónico y teléfono.
+- Validación de campos obligatorios.
+- Validación de formato y longitud.
+- Normalización de los datos antes del almacenamiento.
+- Resumen del servicio, fecha y horario seleccionados.
+- Persistencia local mediante `localStorage`.
+
+### BAR-04 | Validación de disponibilidad
+
+- Consulta de las citas almacenadas.
+- Comparación de fecha y horario antes del registro.
+- Desactivación visual de horarios ocupados.
+- Prevención de reservaciones duplicadas.
+- Validación defensiva inmediatamente antes del almacenamiento.
+- Manejo de intentos simultáneos desde diferentes pestañas.
+
+### BAR-05 | Confirmación de reserva
+
+- Confirmación visual después del registro.
+- Generación de un folio único para cada reservación.
+- Resumen completo de la cita.
+- Envío de correo mediante EmailJS.
+- Estados de envío, éxito y error.
+- Conservación de la cita cuando el servicio de correo no está disponible.
+
+### BAR-12 | Diseño adaptable
+
+Durante el Sprint 1 se comprobaron las interfaces desde computadora y teléfono celular. La aplicación adapta el catálogo, los horarios, el formulario y la confirmación al ancho disponible.
+
+BAR-12 permanece como requisito transversal para su validación posterior durante los Sprint 2 y Sprint 3.
+
+## Tecnologías utilizadas
+
+- React
+- Vite
+- JavaScript
+- JSX
+- CSS
+- localStorage
+- EmailJS
+- Git
+- GitHub
+- ESLint
+- npm
+
+## Estructura principal
+
+```text
+src/
+├── components/
+│   ├── CatalogoServicios.jsx
+│   ├── ConfirmacionCita.jsx
+│   ├── FormularioCita.jsx
+│   └── SelectorHorario.jsx
+├── data/
+│   ├── horarios.js
+│   └── servicios.js
+├── services/
+│   └── emailService.js
+├── utils/
+│   └── generarFolio.js
+├── App.css
+├── App.jsx
+├── index.css
+└── main.jsx
+```
+
