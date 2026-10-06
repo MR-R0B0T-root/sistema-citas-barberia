@@ -750,3 +750,251 @@
   opacity: 0.65;
   transform: none;
 }
+
+/* Navegación principal */
+.app__navegacion {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: rgba(15, 10, 26, 0.35);
+}
+
+.app__navegacion-boton {
+  flex: 1;
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-small);
+  color: var(--color-text-muted);
+  background: transparent;
+  font-weight: 800;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease,
+    background-color 180ms ease;
+}
+
+.app__navegacion-boton:hover {
+  border-color: var(--color-primary-light);
+  color: var(--color-text);
+}
+
+.app__navegacion-boton--activo {
+  border-color: var(--color-primary-light);
+  color: #160b24;
+  background: var(--color-primary-light);
+}
+
+/* Agenda administrativa */
+.agenda {
+  margin-top: clamp(2rem, 5vw, 4rem);
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-large);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.agenda__encabezado {
+  margin-bottom: 1.5rem;
+}
+
+.agenda__etiqueta {
+  margin-bottom: 0.5rem;
+  color: var(--color-primary-light);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.agenda__encabezado h2 {
+  margin: 0 0 0.5rem;
+  color: var(--color-text);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.15;
+}
+
+.agenda__controles {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.agenda__vistas {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.agenda__vistas button {
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: rgba(15, 10, 26, 0.45);
+  font-weight: 700;
+}
+
+.agenda__vistas button:hover {
+  border-color: var(--color-primary-light);
+}
+
+.agenda__vistas .agenda__boton--activo {
+  border-color: var(--color-primary-light);
+  color: #160b24;
+  background: var(--color-primary-light);
+}
+
+.agenda__fecha {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.agenda__fecha label {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.agenda__fecha input {
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: rgba(15, 10, 26, 0.65);
+}
+
+.agenda__periodo,
+.agenda__vacia {
+  padding: 1rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-small);
+  background: rgba(15, 10, 26, 0.3);
+}
+
+.agenda__periodo {
+  margin-bottom: 1rem;
+}
+
+.agenda__periodo p,
+.agenda__vacia p {
+  margin: 0;
+}
+
+.agenda__vacia h3 {
+  margin: 0 0 0.5rem;
+  color: var(--color-text);
+}
+
+.agenda__lista {
+  display: grid;
+  gap: 1rem;
+}
+
+.agenda__cita {
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: rgba(15, 10, 26, 0.35);
+}
+
+.agenda__cita-encabezado {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.agenda__cita-encabezado h3 {
+  margin: 0.25rem 0 0;
+  color: var(--color-text);
+  font-size: 1.5rem;
+}
+
+.agenda__cita-encabezado span {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-primary-light);
+  border-radius: 999px;
+  color: var(--color-primary-light);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.agenda__cita-fecha {
+  margin: 0;
+  font-size: 0.875rem;
+  text-transform: capitalize;
+}
+
+.agenda__detalles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.agenda__detalles div {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+}
+
+.agenda__detalles dt {
+  margin-bottom: 0.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.agenda__detalles dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .app__navegacion,
+  .agenda__controles,
+  .agenda__cita-encabezado {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .app__navegacion-boton,
+  .agenda__fecha input {
+    width: 100%;
+  }
+
+  .agenda {
+    margin-top: 2rem;
+    padding: 1.25rem;
+    border-radius: var(--radius-medium);
+  }
+
+  .agenda__vistas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .agenda__detalles {
+    grid-template-columns: 1fr;
+  }
+
+  .agenda__cita-encabezado span {
+    align-self: start;
+  }
+}
+

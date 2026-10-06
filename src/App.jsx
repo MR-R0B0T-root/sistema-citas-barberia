@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AgendaCitas from './components/AgendaCitas'
 import CatalogoServicios from './components/CatalogoServicios'
 import ConfirmacionCita from './components/ConfirmacionCita'
 import FormularioCita from './components/FormularioCita'
@@ -29,6 +30,7 @@ function obtenerCitasGuardadas() {
 }
 
 function App() {
+  const [vistaActiva, setVistaActiva] = useState('reserva')
   const [servicioSeleccionado, setServicioSeleccionado] = useState(null)
   const [fechaSeleccionada, setFechaSeleccionada] = useState('')
   const [horarioSeleccionado, setHorarioSeleccionado] = useState('')
@@ -127,13 +129,43 @@ function App() {
         </p>
       </header>
 
-      {ultimaCita ? (
+  <nav className="app__navegacion" aria-label="Navegación principal">
+  <button
+    type="button"
+    className={
+      vistaActiva === 'reserva'
+        ? 'app__navegacion-boton app__navegacion-boton--activo'
+        : 'app__navegacion-boton'
+    }
+    aria-pressed={vistaActiva === 'reserva'}
+    onClick={() => setVistaActiva('reserva')}
+  >
+    Reservar cita
+  </button>
+
+  <button
+    type="button"
+    className={
+      vistaActiva === 'agenda'
+        ? 'app__navegacion-boton app__navegacion-boton--activo'
+        : 'app__navegacion-boton'
+    }
+    aria-pressed={vistaActiva === 'agenda'}
+    onClick={() => setVistaActiva('agenda')}
+  >
+    Administrar agenda
+  </button>
+</nav>
+
+      {vistaActiva === 'agenda' ? (
+          <AgendaCitas citas={citas} />
+            ) : ultimaCita ? (
         <ConfirmacionCita
           cita={ultimaCita}
           estadoCorreo={estadoCorreo}
           onNuevaReserva={iniciarNuevaReserva}
         />
-      ) : (
+            ) : (
         <>
           <CatalogoServicios
             servicios={servicios}
