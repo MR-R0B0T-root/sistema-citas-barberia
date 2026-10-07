@@ -1,119 +1,113 @@
-import { useState } from 'react'
-import AgendaCitas from './components/AgendaCitas'
-import CatalogoServicios from './components/CatalogoServicios'
-import ConfirmacionCita from './components/ConfirmacionCita'
-import FormularioCita from './components/FormularioCita'
-import SelectorHorario from './components/SelectorHorario'
-import { generarHorarios } from './data/horarios'
-import { servicios } from './data/servicios'
-import { enviarConfirmacionCita } from './services/emailService'
-import { generarFolio } from './utils/generarFolio'
-import './App.css'
+import { useState } from "react";
+import { estaDisponible } from "./utils/disponibilidadCitas";
+import AgendaCitas from "./components/AgendaCitas";
+import CatalogoServicios from "./components/CatalogoServicios";
+import ConfirmacionCita from "./components/ConfirmacionCita";
+import FormularioCita from "./components/FormularioCita";
+import SelectorHorario from "./components/SelectorHorario";
+import { generarHorarios } from "./data/horarios";
+import { servicios } from "./data/servicios";
+import { enviarConfirmacionCita } from "./services/emailService";
+import { generarFolio } from "./utils/generarFolio";
+import "./App.css";
 
-const horarios = generarHorarios()
-const CLAVE_CITAS = 'barberia-citas'
+const horarios = generarHorarios();
+const CLAVE_CITAS = "barberia-citas";
 
 function obtenerCitasGuardadas() {
   try {
-    const citasGuardadas = localStorage.getItem(CLAVE_CITAS)
+    const citasGuardadas = localStorage.getItem(CLAVE_CITAS);
 
     if (!citasGuardadas) {
-      return []
+      return [];
     }
 
-    const citasConvertidas = JSON.parse(citasGuardadas)
+    const citasConvertidas = JSON.parse(citasGuardadas);
 
-    return Array.isArray(citasConvertidas) ? citasConvertidas : []
+    return Array.isArray(citasConvertidas) ? citasConvertidas : [];
   } catch {
-    return []
+    return [];
   }
 }
 
 function App() {
-  const [vistaActiva, setVistaActiva] = useState('reserva')
-  const [servicioSeleccionado, setServicioSeleccionado] = useState(null)
-  const [fechaSeleccionada, setFechaSeleccionada] = useState('')
-  const [horarioSeleccionado, setHorarioSeleccionado] = useState('')
-  const [citas, setCitas] = useState(obtenerCitasGuardadas)
-  const [errorDisponibilidad, setErrorDisponibilidad] = useState('')
-  const [ultimaCita, setUltimaCita] = useState(null)
-  const [estadoCorreo, setEstadoCorreo] = useState('inactivo')
+  const [vistaActiva, setVistaActiva] = useState("reserva");
+  const [servicioSeleccionado, setServicioSeleccionado] = useState(null);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState("");
+  const [horarioSeleccionado, setHorarioSeleccionado] = useState("");
+  const [citas, setCitas] = useState(obtenerCitasGuardadas);
+  const [errorDisponibilidad, setErrorDisponibilidad] = useState("");
+  const [ultimaCita, setUltimaCita] = useState(null);
+  const [estadoCorreo, setEstadoCorreo] = useState("inactivo");
 
   const servicioElegido =
-    servicios.find(
-      (servicio) => servicio.id === servicioSeleccionado,
-    ) ?? null
+    servicios.find((servicio) => servicio.id === servicioSeleccionado) ?? null;
 
   function enviarCorreoConfirmacion(cita) {
-    setEstadoCorreo('enviando')
+    setEstadoCorreo("enviando");
 
     enviarConfirmacionCita(cita)
       .then(() => {
-        setEstadoCorreo('enviado')
+        setEstadoCorreo("enviado");
       })
       .catch((error) => {
-        console.error(
-          'No se pudo enviar el correo de confirmación:',
-          error,
-        )
+        console.error("No se pudo enviar el correo de confirmación:", error);
 
-        setEstadoCorreo('error')
-      })
+        setEstadoCorreo("error");
+      });
   }
 
   function registrarCita(nuevaCita) {
-    const citasGuardadas = obtenerCitasGuardadas()
+    const citasGuardadas = obtenerCitasGuardadas();
 
-    const horarioOcupado = citasGuardadas.some(
-      (cita) =>
-        cita.fecha === nuevaCita.fecha &&
-        cita.horario === nuevaCita.horario,
-    )
+    const horarioDisponible = estaDisponible({
+      citas: citasGuardadas,
+      fecha: nuevaCita.fecha,
+      horario: nuevaCita.horario,
+      duracion: nuevaCita.servicio.duracion,
+    });
 
-    if (horarioOcupado) {
+    if (!horarioDisponible) {
       setErrorDisponibilidad(
-        'El horario seleccionado acaba de ser ocupado. Elige otro horario.',
-      )
+        "El horario seleccionado no está disponible para la duración del servicio. Elige otro horario.",
+      );
 
-      setCitas(citasGuardadas)
-      setHorarioSeleccionado('')
+      setCitas(citasGuardadas);
+      setHorarioSeleccionado("");
 
-      return false
+      return false;
     }
 
     const citaCompleta = {
       ...nuevaCita,
       id: generarFolio(),
       fechaRegistro: new Date().toISOString(),
-    }
+    };
 
-    const citasActualizadas = [...citasGuardadas, citaCompleta]
+    const citasActualizadas = [...citasGuardadas, citaCompleta];
 
-    localStorage.setItem(
-      CLAVE_CITAS,
-      JSON.stringify(citasActualizadas),
-    )
+    localStorage.setItem(CLAVE_CITAS, JSON.stringify(citasActualizadas));
 
-    setCitas(citasActualizadas)
-    setUltimaCita(citaCompleta)
-    setErrorDisponibilidad('')
+    setCitas(citasActualizadas);
+    setUltimaCita(citaCompleta);
+    setErrorDisponibilidad("");
 
-    setServicioSeleccionado(null)
-    setFechaSeleccionada('')
-    setHorarioSeleccionado('')
+    setServicioSeleccionado(null);
+    setFechaSeleccionada("");
+    setHorarioSeleccionado("");
 
-    enviarCorreoConfirmacion(citaCompleta)
+    enviarCorreoConfirmacion(citaCompleta);
 
-    return true
+    return true;
   }
 
   function iniciarNuevaReserva() {
-    setUltimaCita(null)
-    setEstadoCorreo('inactivo')
-    setErrorDisponibilidad('')
-    setServicioSeleccionado(null)
-    setFechaSeleccionada('')
-    setHorarioSeleccionado('')
+    setUltimaCita(null);
+    setEstadoCorreo("inactivo");
+    setErrorDisponibilidad("");
+    setServicioSeleccionado(null);
+    setFechaSeleccionada("");
+    setHorarioSeleccionado("");
   }
 
   return (
@@ -129,43 +123,43 @@ function App() {
         </p>
       </header>
 
-  <nav className="app__navegacion" aria-label="Navegación principal">
-  <button
-    type="button"
-    className={
-      vistaActiva === 'reserva'
-        ? 'app__navegacion-boton app__navegacion-boton--activo'
-        : 'app__navegacion-boton'
-    }
-    aria-pressed={vistaActiva === 'reserva'}
-    onClick={() => setVistaActiva('reserva')}
-  >
-    Reservar cita
-  </button>
+      <nav className="app__navegacion" aria-label="Navegación principal">
+        <button
+          type="button"
+          className={
+            vistaActiva === "reserva"
+              ? "app__navegacion-boton app__navegacion-boton--activo"
+              : "app__navegacion-boton"
+          }
+          aria-pressed={vistaActiva === "reserva"}
+          onClick={() => setVistaActiva("reserva")}
+        >
+          Reservar cita
+        </button>
 
-  <button
-    type="button"
-    className={
-      vistaActiva === 'agenda'
-        ? 'app__navegacion-boton app__navegacion-boton--activo'
-        : 'app__navegacion-boton'
-    }
-    aria-pressed={vistaActiva === 'agenda'}
-    onClick={() => setVistaActiva('agenda')}
-  >
-    Administrar agenda
-  </button>
-</nav>
+        <button
+          type="button"
+          className={
+            vistaActiva === "agenda"
+              ? "app__navegacion-boton app__navegacion-boton--activo"
+              : "app__navegacion-boton"
+          }
+          aria-pressed={vistaActiva === "agenda"}
+          onClick={() => setVistaActiva("agenda")}
+        >
+          Administrar agenda
+        </button>
+      </nav>
 
-      {vistaActiva === 'agenda' ? (
-          <AgendaCitas citas={citas} />
-            ) : ultimaCita ? (
+      {vistaActiva === "agenda" ? (
+        <AgendaCitas citas={citas} />
+      ) : ultimaCita ? (
         <ConfirmacionCita
           cita={ultimaCita}
           estadoCorreo={estadoCorreo}
           onNuevaReserva={iniciarNuevaReserva}
         />
-            ) : (
+      ) : (
         <>
           <CatalogoServicios
             servicios={servicios}
@@ -176,6 +170,7 @@ function App() {
           <SelectorHorario
             horarios={horarios}
             citas={citas}
+            servicio={servicioElegido}
             fechaSeleccionada={fechaSeleccionada}
             horarioSeleccionado={horarioSeleccionado}
             onSeleccionarFecha={setFechaSeleccionada}
@@ -201,7 +196,7 @@ function App() {
         Citas registradas en este navegador: {citas.length}
       </p>
     </main>
-  )
+  );
 }
 
-export default App
+export default App;

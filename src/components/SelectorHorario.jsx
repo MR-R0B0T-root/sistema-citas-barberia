@@ -1,41 +1,52 @@
-import { useState } from 'react'
+import { useState } from "react";
+import { estaDisponible } from "../utils/disponibilidadCitas";
 
 function obtenerFechaLocal() {
-  const hoy = new Date()
-  const anio = hoy.getFullYear()
-  const mes = String(hoy.getMonth() + 1).padStart(2, '0')
-  const dia = String(hoy.getDate()).padStart(2, '0')
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoy.getDate()).padStart(2, "0");
 
-  return `${anio}-${mes}-${dia}`
+  return `${anio}-${mes}-${dia}`;
 }
 
 function SelectorHorario({
   horarios,
   citas,
+  servicio,
   fechaSeleccionada,
   horarioSeleccionado,
   onSeleccionarFecha,
   onSeleccionarHorario,
 }) {
-  const fechaMinima = obtenerFechaLocal()
-  const [errorFecha, setErrorFecha] = useState('')
-  const horariosOcupados = citas
-  .filter((cita) => cita.fecha === fechaSeleccionada)
-  .map((cita) => cita.horario)
-
-  function manejarCambioFecha(evento) {
-    const nuevaFecha = evento.target.value
-
-    onSeleccionarHorario('')
-
-    if (nuevaFecha && nuevaFecha < fechaMinima) {
-      onSeleccionarFecha('')
-      setErrorFecha('La fecha de la cita no puede ser anterior al día actual.')
-      return
+  const fechaMinima = obtenerFechaLocal();
+  const [errorFecha, setErrorFecha] = useState("");
+  function horarioNoDisponible(horario) {
+    if (!servicio || !fechaSeleccionada) {
+      return false;
     }
 
-    onSeleccionarFecha(nuevaFecha)
-    setErrorFecha('')
+    return !estaDisponible({
+      citas,
+      fecha: fechaSeleccionada,
+      horario,
+      duracion: servicio.duracion,
+    });
+  }
+
+  function manejarCambioFecha(evento) {
+    const nuevaFecha = evento.target.value;
+
+    onSeleccionarHorario("");
+
+    if (nuevaFecha && nuevaFecha < fechaMinima) {
+      onSeleccionarFecha("");
+      setErrorFecha("La fecha de la cita no puede ser anterior al día actual.");
+      return;
+    }
+
+    onSeleccionarFecha(nuevaFecha);
+    setErrorFecha("");
   }
 
   return (
@@ -60,7 +71,7 @@ function SelectorHorario({
           min={fechaMinima}
           value={fechaSeleccionada}
           onChange={manejarCambioFecha}
-          aria-describedby={errorFecha ? 'error-fecha' : undefined}
+          aria-describedby={errorFecha ? "error-fecha" : undefined}
           aria-invalid={Boolean(errorFecha)}
         />
 
@@ -80,15 +91,15 @@ function SelectorHorario({
             aria-labelledby="instruccion-horarios"
           >
             {horarios.map((horario) => {
-              const estaSeleccionado = horarioSeleccionado === horario
-              const estaOcupado = horariosOcupados.includes(horario)
+              const estaSeleccionado = horarioSeleccionado === horario;
+              const estaOcupado = horarioNoDisponible(horario);
 
               return (
                 <button
                   type="button"
                   className={`horario ${
-                    estaSeleccionado ? 'horario--seleccionado' : ''
-                  } ${estaOcupado ? 'horario--ocupado' : ''}
+                    estaSeleccionado ? "horario--seleccionado" : ""
+                  } ${estaOcupado ? "horario--ocupado" : ""}
                   }`}
                   aria-pressed={estaSeleccionado}
                   disabled={estaOcupado}
@@ -97,7 +108,7 @@ function SelectorHorario({
                 >
                   {estaOcupado ? `${horario} · Ocupado` : horario}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
@@ -107,7 +118,7 @@ function SelectorHorario({
         </p>
       )}
     </section>
-  )
+  );
 }
 
-export default SelectorHorario
+export default SelectorHorario;
