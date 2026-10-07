@@ -4,6 +4,7 @@ import AgendaCitas from "./components/AgendaCitas";
 import CatalogoServicios from "./components/CatalogoServicios";
 import ConfirmacionCita from "./components/ConfirmacionCita";
 import FormularioCita from "./components/FormularioCita";
+import FormularioEdicionCita from "./components/FormularioEdicionCita";
 import SelectorHorario from "./components/SelectorHorario";
 import { generarHorarios } from "./data/horarios";
 import { servicios } from "./data/servicios";
@@ -13,6 +14,19 @@ import "./App.css";
 
 const horarios = generarHorarios();
 const CLAVE_CITAS = "barberia-citas";
+
+const PATRON_NOMBRE = /^[\p{L}\p{M}][\p{L}\p{M}\s'.-]{1,79}$/u;
+const PATRON_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PATRON_TELEFONO = /^\d{10,15}$/;
+
+function obtenerFechaLocal() {
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoy.getDate()).padStart(2, "0");
+
+  return `${anio}-${mes}-${dia}`;
+}
 
 function obtenerCitasGuardadas() {
   try {
@@ -32,6 +46,8 @@ function obtenerCitasGuardadas() {
 
 function App() {
   const [vistaActiva, setVistaActiva] = useState("reserva");
+  const [citaEnEdicion, setCitaEnEdicion] = useState(null);
+  const [errorEdicion, setErrorEdicion] = useState("");
   const [servicioSeleccionado, setServicioSeleccionado] = useState(null);
   const [fechaSeleccionada, setFechaSeleccionada] = useState("");
   const [horarioSeleccionado, setHorarioSeleccionado] = useState("");
@@ -110,6 +126,118 @@ function App() {
     setHorarioSeleccionado("");
   }
 
+  function iniciarEdicionCita(cita) {
+    setCitaEnEdicion(cita);
+    setErrorEdicion("");
+  }
+
+  function actualizarCita(datosEdicion) {
+    if (!citaEnEdicion) {
+      return false;
+    }
+
+    const nombreNormalizado = datosEdicion.nombre.trim().replace(/\s+/g, " ");
+    const correoNormalizado = datosEdicion.correo.trim().toLowerCase();
+    const telefonoNormalizado = datosEdicion.telefono.replace(/\D/g, "");
+
+    if (
+      !nombreNormalizado ||
+      !correoNormalizado ||
+      !telefonoNormalizado ||
+      !datosEdicion.servicioId ||
+      !datosEdicion.fecha ||
+      !datosEdicion.horario
+    ) {
+      setErrorEdicion(
+        "Completa todos los campos antes de guardar los cambios.",
+      );
+      return false;
+    }
+
+    if (!PATRON_NOMBRE.test(nombreNormalizado)) {
+      setErrorEdicion(
+        "El nombre debe tener de 2 a 80 caracteres y contener únicamente letras, espacios, apóstrofes o guiones.",
+      );
+      return false;
+    }
+
+    if (
+      correoNormalizado.length > 254 ||
+      !PATRON_CORREO.test(correoNormalizado)
+    ) {
+      setErrorEdicion("Ingresa un correo electrónico válido.");
+      return false;
+    }
+
+    if (!PATRON_TELEFONO.test(telefonoNormalizado)) {
+      setErrorEdicion("Ingresa un teléfono de 10 a 15 dígitos.");
+      return false;
+    }
+
+    if (datosEdicion.fecha < obtenerFechaLocal()) {
+      setErrorEdicion(
+        "La fecha de la cita no puede ser anterior al día actual.",
+      );
+      return false;
+    }
+
+    const servicioActualizado = servicios.find(
+      (servicio) => servicio.id === datosEdicion.servicioId,
+    );
+
+    if (!servicioActualizado) {
+      setErrorEdicion("El servicio seleccionado no es válido.");
+      return false;
+    }
+
+    const citasGuardadas = obtenerCitasGuardadas();
+
+    const horarioDisponible = estaDisponible({
+      citas: citasGuardadas,
+      fecha: datosEdicion.fecha,
+      horario: datosEdicion.horario,
+      duracion: servicioActualizado.duracion,
+      citaIdIgnorada: citaEnEdicion.id,
+    });
+
+    if (!horarioDisponible) {
+      setErrorEdicion(
+        "El horario seleccionado no está disponible para la duración del servicio.",
+      );
+      return false;
+    }
+
+    const citaActualizada = {
+      ...citaEnEdicion,
+      cliente: {
+        nombre: nombreNormalizado,
+        correo: correoNormalizado,
+        telefono: telefonoNormalizado,
+      },
+      servicio: servicioActualizado,
+      fecha: datosEdicion.fecha,
+      horario: datosEdicion.horario,
+      fechaActualizacion: new Date().toISOString(),
+    };
+
+    const citasActualizadas = citasGuardadas.map((cita) =>
+      cita.id === citaEnEdicion.id ? citaActualizada : cita,
+    );
+
+    try {
+      localStorage.setItem(CLAVE_CITAS, JSON.stringify(citasActualizadas));
+    } catch {
+      setErrorEdicion("No fue posible guardar los cambios en este navegador.");
+      return false;
+    }
+
+    setCitas(citasActualizadas);
+    setCitaEnEdicion(null);
+    setErrorEdicion("");
+
+    return true;
+  }
+
   return (
     <main className="app">
       <header>
@@ -152,7 +280,28 @@ function App() {
       </nav>
 
       {vistaActiva === "agenda" ? (
-        <AgendaCitas citas={citas} />
+        <>
+          <AgendaCitas
+            citas={citas}
+            citaEnEdicion={citaEnEdicion}
+            onEditarCita={iniciarEdicionCita}
+          />
+
+          {citaEnEdicion && (
+            <FormularioEdicionCita
+              key={citaEnEdicion.id}
+              cita={citaEnEdicion}
+              servicios={servicios}
+              horarios={horarios}
+              error={errorEdicion}
+              onCancelar={() => {
+                setCitaEnEdicion(null);
+                setErrorEdicion("");
+              }}
+              onGuardar={actualizarCita}
+            />
+          )}
+        </>
       ) : ultimaCita ? (
         <ConfirmacionCita
           cita={ultimaCita}

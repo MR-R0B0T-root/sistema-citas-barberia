@@ -1,88 +1,88 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 function obtenerFechaLocal() {
-  const hoy = new Date()
-  const anio = hoy.getFullYear()
-  const mes = String(hoy.getMonth() + 1).padStart(2, '0')
-  const dia = String(hoy.getDate()).padStart(2, '0')
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoy.getDate()).padStart(2, "0");
 
-  return `${anio}-${mes}-${dia}`
+  return `${anio}-${mes}-${dia}`;
 }
 
 function convertirFechaLocal(fecha) {
-  const [anio, mes, dia] = fecha.split('-').map(Number)
+  const [anio, mes, dia] = fecha.split("-").map(Number);
 
-  return new Date(anio, mes - 1, dia)
+  return new Date(anio, mes - 1, dia);
 }
 
 function convertirFechaISO(fecha) {
-  const anio = fecha.getFullYear()
-  const mes = String(fecha.getMonth() + 1).padStart(2, '0')
-  const dia = String(fecha.getDate()).padStart(2, '0')
+  const anio = fecha.getFullYear();
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  const dia = String(fecha.getDate()).padStart(2, "0");
 
-  return `${anio}-${mes}-${dia}`
+  return `${anio}-${mes}-${dia}`;
 }
 
 function obtenerInicioSemana(fecha) {
-  const fechaLocal = convertirFechaLocal(fecha)
-  const diaSemana = fechaLocal.getDay()
-  const diferencia = diaSemana === 0 ? -6 : 1 - diaSemana
+  const fechaLocal = convertirFechaLocal(fecha);
+  const diaSemana = fechaLocal.getDay();
+  const diferencia = diaSemana === 0 ? -6 : 1 - diaSemana;
 
-  fechaLocal.setDate(fechaLocal.getDate() + diferencia)
+  fechaLocal.setDate(fechaLocal.getDate() + diferencia);
 
-  return fechaLocal
+  return fechaLocal;
 }
 
 function obtenerFechasSemana(fecha) {
-  const inicioSemana = obtenerInicioSemana(fecha)
+  const inicioSemana = obtenerInicioSemana(fecha);
 
   return Array.from({ length: 7 }, (_, indice) => {
-    const fechaSemana = new Date(inicioSemana)
-    fechaSemana.setDate(inicioSemana.getDate() + indice)
+    const fechaSemana = new Date(inicioSemana);
+    fechaSemana.setDate(inicioSemana.getDate() + indice);
 
-    return convertirFechaISO(fechaSemana)
-  })
+    return convertirFechaISO(fechaSemana);
+  });
 }
 
 function formatearFecha(fecha) {
-  return new Intl.DateTimeFormat('es-MX', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(convertirFechaLocal(fecha))
+  return new Intl.DateTimeFormat("es-MX", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(convertirFechaLocal(fecha));
 }
 
 function formatearPrecio(precio) {
-  return precio.toLocaleString('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
+  return precio.toLocaleString("es-MX", {
+    style: "currency",
+    currency: "MXN",
     maximumFractionDigits: 0,
-  })
+  });
 }
 
 function ordenarCitas(citas) {
   return [...citas].sort((primeraCita, segundaCita) => {
-    const primeraFecha = `${primeraCita.fecha}T${primeraCita.horario}`
-    const segundaFecha = `${segundaCita.fecha}T${segundaCita.horario}`
+    const primeraFecha = `${primeraCita.fecha}T${primeraCita.horario}`;
+    const segundaFecha = `${segundaCita.fecha}T${segundaCita.horario}`;
 
-    return primeraFecha.localeCompare(segundaFecha)
-  })
+    return primeraFecha.localeCompare(segundaFecha);
+  });
 }
 
-function AgendaCitas({ citas }) {
-  const [tipoVista, setTipoVista] = useState('dia')
-  const [fechaConsulta, setFechaConsulta] = useState(obtenerFechaLocal)
+function AgendaCitas({ citas, citaEnEdicion, onEditarCita }) {
+  const [tipoVista, setTipoVista] = useState("dia");
+  const [fechaConsulta, setFechaConsulta] = useState(obtenerFechaLocal);
 
-  const fechasSemana = obtenerFechasSemana(fechaConsulta)
+  const fechasSemana = obtenerFechasSemana(fechaConsulta);
 
   const citasFiltradas = ordenarCitas(citas).filter((cita) => {
-    if (tipoVista === 'dia') {
-      return cita.fecha === fechaConsulta
+    if (tipoVista === "dia") {
+      return cita.fecha === fechaConsulta;
     }
 
-    return fechasSemana.includes(cita.fecha)
-  })
+    return fechasSemana.includes(cita.fecha);
+  });
 
   return (
     <section className="agenda" aria-labelledby="titulo-agenda">
@@ -91,30 +91,27 @@ function AgendaCitas({ citas }) {
         <h2 id="titulo-agenda">Agenda de citas</h2>
 
         <p>
-          Consulta las reservaciones registradas en este navegador por día o
-          por semana.
+          Consulta las reservaciones registradas en este navegador por día o por
+          semana.
         </p>
       </div>
 
       <div className="agenda__controles">
-        <div
-          className="agenda__vistas"
-          aria-label="Tipo de vista de la agenda"
-        >
+        <div className="agenda__vistas" aria-label="Tipo de vista de la agenda">
           <button
             type="button"
-            className={tipoVista === 'dia' ? 'agenda__boton--activo' : ''}
-            aria-pressed={tipoVista === 'dia'}
-            onClick={() => setTipoVista('dia')}
+            className={tipoVista === "dia" ? "agenda__boton--activo" : ""}
+            aria-pressed={tipoVista === "dia"}
+            onClick={() => setTipoVista("dia")}
           >
             Vista diaria
           </button>
 
           <button
             type="button"
-            className={tipoVista === 'semana' ? 'agenda__boton--activo' : ''}
-            aria-pressed={tipoVista === 'semana'}
-            onClick={() => setTipoVista('semana')}
+            className={tipoVista === "semana" ? "agenda__boton--activo" : ""}
+            aria-pressed={tipoVista === "semana"}
+            onClick={() => setTipoVista("semana")}
           >
             Vista semanal
           </button>
@@ -133,11 +130,11 @@ function AgendaCitas({ citas }) {
       </div>
 
       <div className="agenda__periodo" aria-live="polite">
-        {tipoVista === 'dia' ? (
+        {tipoVista === "dia" ? (
           <p>{formatearFecha(fechaConsulta)}</p>
         ) : (
           <p>
-            Del {formatearFecha(fechasSemana[0])} al{' '}
+            Del {formatearFecha(fechasSemana[0])} al{" "}
             {formatearFecha(fechasSemana[6])}
           </p>
         )}
@@ -146,14 +143,17 @@ function AgendaCitas({ citas }) {
       {citasFiltradas.length === 0 ? (
         <div className="agenda__vacia" role="status">
           <h3>No hay citas registradas</h3>
-          <p>
-            No se encontraron reservaciones para el periodo seleccionado.
-          </p>
+          <p>No se encontraron reservaciones para el periodo seleccionado.</p>
         </div>
       ) : (
         <div className="agenda__lista">
           {citasFiltradas.map((cita) => (
-            <article className="agenda__cita" key={cita.id}>
+            <article
+              className={`agenda__cita ${
+               citaEnEdicion?.id === cita.id ? "agenda__cita--seleccionada" : ""
+            }`}
+            key={cita.id}
+          >
               <div className="agenda__cita-encabezado">
                 <div>
                   <p className="agenda__cita-fecha">
@@ -196,12 +196,24 @@ function AgendaCitas({ citas }) {
                   <dd>{cita.id}</dd>
                 </div>
               </dl>
+
+              <div className="agenda__acciones">
+                <button
+                  type="button"
+                  className="agenda__boton-editar"
+                  onClick={() => onEditarCita(cita)}
+                >
+                  {citaEnEdicion?.id === cita.id
+                    ? "Cita seleccionada"
+                    : "Editar cita"}
+                </button>
+              </div>
             </article>
           ))}
         </div>
       )}
     </section>
-  )
+  );
 }
 
-export default AgendaCitas
+export default AgendaCitas;
