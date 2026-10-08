@@ -47,6 +47,7 @@ function obtenerCitasGuardadas() {
 function App() {
   const [vistaActiva, setVistaActiva] = useState("reserva");
   const [citaEnEdicion, setCitaEnEdicion] = useState(null);
+  const [citaPorCancelar, setCitaPorCancelar] = useState(null);
   const [errorEdicion, setErrorEdicion] = useState("");
   const [servicioSeleccionado, setServicioSeleccionado] = useState(null);
   const [fechaSeleccionada, setFechaSeleccionada] = useState("");
@@ -128,7 +129,45 @@ function App() {
 
   function iniciarEdicionCita(cita) {
     setCitaEnEdicion(cita);
+    setCitaPorCancelar(null);
     setErrorEdicion("");
+  }
+
+  function solicitarCancelacionCita(cita) {
+  setCitaPorCancelar(cita);
+  setCitaEnEdicion(null);
+  setErrorEdicion("");
+  }
+
+  function confirmarCancelacionCita() {
+  if (!citaPorCancelar) {
+    return false;
+  }
+
+  const citasGuardadas = obtenerCitasGuardadas();
+
+  const citasActualizadas = citasGuardadas.filter(
+    (cita) => cita.id !== citaPorCancelar.id,
+  );
+
+  try {
+    localStorage.setItem(
+      CLAVE_CITAS,
+      JSON.stringify(citasActualizadas),
+    );
+  } catch {
+    return false;
+  }
+
+  setCitas(citasActualizadas);
+  setCitaPorCancelar(null);
+
+  if (citaEnEdicion?.id === citaPorCancelar.id) {
+    setCitaEnEdicion(null);
+    setErrorEdicion("");
+  }
+
+  return true;
   }
 
   function actualizarCita(datosEdicion) {
@@ -285,7 +324,70 @@ function App() {
             citas={citas}
             citaEnEdicion={citaEnEdicion}
             onEditarCita={iniciarEdicionCita}
+            onSolicitarCancelacion={solicitarCancelacionCita}
           />
+
+          {citaPorCancelar && (
+            <section
+              className="cancelacion"
+              aria-labelledby="titulo-cancelacion"
+            >
+              <div className="cancelacion__encabezado">
+                <p className="cancelacion__etiqueta">Confirmación requerida</p>
+
+                <h2 id="titulo-cancelacion">Cancelar cita</h2>
+
+                <p>
+                  Esta acción eliminará la reservación y liberará el horario.
+                </p>
+              </div>
+
+              <dl className="cancelacion__resumen">
+                <div>
+                  <dt>Cliente</dt>
+                  <dd>{citaPorCancelar.cliente.nombre}</dd>
+                </div>
+
+                <div>
+                  <dt>Servicio</dt>
+                  <dd>{citaPorCancelar.servicio.nombre}</dd>
+                </div>
+
+                <div>
+                  <dt>Fecha</dt>
+                  <dd>{citaPorCancelar.fecha}</dd>
+                </div>
+
+                <div>
+                  <dt>Horario</dt>
+                  <dd>{citaPorCancelar.horario}</dd>
+                </div>
+
+                <div>
+                  <dt>Folio</dt>
+                  <dd>{citaPorCancelar.id}</dd>
+                </div>
+              </dl>
+
+              <div className="cancelacion__acciones">
+                <button
+                  type="button"
+                  className="cancelacion__boton cancelacion__boton--secundario"
+                  onClick={() => setCitaPorCancelar(null)}
+                >
+                  Conservar cita
+                </button>
+
+                <button
+                  type="button"
+                  className="cancelacion__boton cancelacion__boton--peligro"
+                  onClick={confirmarCancelacionCita}
+                >
+                  Confirmar cancelación
+                </button>
+              </div>
+            </section>
+          )}
 
           {citaEnEdicion && (
             <FormularioEdicionCita

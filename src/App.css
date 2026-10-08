@@ -974,6 +974,7 @@
 .agenda__acciones {
   display: flex;
   justify-content: flex-end;
+  gap: 0.75rem;
   margin-top: 1rem;
 }
 
@@ -989,6 +990,32 @@
     color 180ms ease,
     background-color 180ms ease,
     transform 180ms ease;
+}
+
+.agenda__boton-cancelar {
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(251, 113, 133, 0.7);
+  border-radius: var(--radius-small);
+  color: #fecdd3;
+  background: rgba(127, 29, 29, 0.18);
+  font-weight: 800;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.agenda__boton-cancelar:hover {
+  border-color: #fb7185;
+  color: #fff1f2;
+  background: rgba(190, 18, 60, 0.38);
+  transform: translateY(-2px);
+}
+
+.agenda__boton-cancelar:active {
+  transform: scale(0.98);
 }
 
 .agenda__boton-editar:hover {
@@ -1133,27 +1160,141 @@
   background: var(--color-focus);
 }
 
+/* Confirmación de cancelación */
+.cancelacion {
+  margin-top: 1.5rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid rgba(251, 113, 133, 0.75);
+  border-radius: var(--radius-large);
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(190, 18, 60, 0.2),
+      transparent 20rem
+    ),
+    var(--color-surface);
+  box-shadow:
+    0 0 0 1px rgba(251, 113, 133, 0.08),
+    var(--shadow-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: slide-in-down 0.35s ease-out;
+}
+
+.cancelacion__encabezado {
+  margin-bottom: 1.5rem;
+}
+
+.cancelacion__etiqueta {
+  margin-bottom: 0.5rem;
+  color: #fda4af;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cancelacion__encabezado h2 {
+  margin: 0 0 0.5rem;
+  color: var(--color-text);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.15;
+}
+
+.cancelacion__resumen {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+}
+
+.cancelacion__resumen div {
+  min-width: 0;
+  padding: 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: rgba(15, 10, 26, 0.4);
+}
+
+.cancelacion__resumen div:last-child {
+  grid-column: 1 / -1;
+}
+
+.cancelacion__resumen dt {
+  margin-bottom: 0.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cancelacion__resumen dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.cancelacion__resumen div:last-child dd {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 0.875rem;
+}
+
+.cancelacion__acciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.cancelacion__boton {
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-small);
+  font-weight: 800;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.cancelacion__boton:hover {
+  transform: translateY(-2px);
+}
+
+.cancelacion__boton:active {
+  transform: scale(0.98);
+}
+
+.cancelacion__boton--secundario {
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  background: transparent;
+}
+
+.cancelacion__boton--secundario:hover {
+  border-color: var(--color-primary-light);
+  background: rgba(126, 34, 206, 0.18);
+}
+
+.cancelacion__boton--peligro {
+  border: 1px solid #fb7185;
+  color: #fff1f2;
+  background: rgba(190, 18, 60, 0.42);
+}
+
+.cancelacion__boton--peligro:hover {
+  border-color: #fda4af;
+  background: rgba(225, 29, 72, 0.62);
+}
+
 @media (max-width: 640px) {
   .app__navegacion,
   .agenda__controles,
   .agenda__cita-encabezado {
     flex-direction: column;
     align-items: stretch;
-
-    .edicion {
-      padding: 1.25rem;
-      border-radius: var(--radius-medium);
-    }
-
-    .edicion__formulario,
-    .edicion__acciones {
-      grid-template-columns: 1fr;
-    }
-
-    .edicion__formulario .campo:first-child,
-    .edicion__acciones {
-      grid-column: auto;
-    }
   }
 
   .app__navegacion-boton,
@@ -1181,10 +1322,41 @@
   }
 
   .agenda__acciones {
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
-  .agenda__boton-editar {
+  .agenda__boton-editar,
+  .agenda__boton-cancelar {
     width: 100%;
+  }
+
+  .edicion {
+    padding: 1.25rem;
+    border-radius: var(--radius-medium);
+  }
+
+  .edicion__formulario,
+  .edicion__acciones {
+    grid-template-columns: 1fr;
+  }
+
+  .edicion__formulario .campo:first-child,
+  .edicion__acciones {
+    grid-column: auto;
+  }
+
+  .cancelacion {
+    padding: 1.25rem;
+    border-radius: var(--radius-medium);
+  }
+
+  .cancelacion__resumen,
+  .cancelacion__acciones {
+    grid-template-columns: 1fr;
+  }
+
+  .cancelacion__resumen div:last-child {
+    grid-column: auto;
   }
 }

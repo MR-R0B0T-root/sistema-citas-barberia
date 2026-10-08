@@ -70,7 +70,12 @@ function ordenarCitas(citas) {
   });
 }
 
-function AgendaCitas({ citas, citaEnEdicion, onEditarCita }) {
+function AgendaCitas({
+  citas,
+  citaEnEdicion,
+  onEditarCita,
+  onSolicitarCancelacion,
+}) {
   const [tipoVista, setTipoVista] = useState("dia");
   const [fechaConsulta, setFechaConsulta] = useState(obtenerFechaLocal);
 
@@ -150,10 +155,12 @@ function AgendaCitas({ citas, citaEnEdicion, onEditarCita }) {
           {citasFiltradas.map((cita) => (
             <article
               className={`agenda__cita ${
-               citaEnEdicion?.id === cita.id ? "agenda__cita--seleccionada" : ""
-            }`}
-            key={cita.id}
-          >
+                citaEnEdicion?.id === cita.id
+                  ? "agenda__cita--seleccionada"
+                  : ""
+              }`}
+              key={cita.id}
+            >
               <div className="agenda__cita-encabezado">
                 <div>
                   <p className="agenda__cita-fecha">
@@ -206,6 +213,14 @@ function AgendaCitas({ citas, citaEnEdicion, onEditarCita }) {
                   {citaEnEdicion?.id === cita.id
                     ? "Cita seleccionada"
                     : "Editar cita"}
+                </button>
+
+                <button
+                  type="button"
+                  className="agenda__boton-cancelar"
+                  onClick={() => onSolicitarCancelacion(cita)}
+                >
+                  Cancelar cita
                 </button>
               </div>
             </article>
