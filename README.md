@@ -280,4 +280,4 @@ npm run build
 
 Proyecto académico desarrollado por Jorge E. Ledesma Cruz.
 
-Durante el Sprint 2, el autor realizó la planeación operativa, implementación, pruebas, actualización de Trello, documentación y publicación de los incrementos descritos. Durante el periodo documentado no se recibió material de desarrollo ni evidencia verificable de contribuciones adicionales por parte de los demás integrantes.
+Durante el Sprint 2, el autor realizó la planeación operativa, implementación, pruebas, actualización de Trello, documentación y publicación de los incrementos descritos. 
