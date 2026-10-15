@@ -70,6 +70,14 @@ function ordenarCitas(citas) {
   });
 }
 
+function normalizarTexto(texto) {
+  return String(texto ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
 function AgendaCitas({
   citas,
   citaEnEdicion,
@@ -78,16 +86,31 @@ function AgendaCitas({
 }) {
   const [tipoVista, setTipoVista] = useState("dia");
   const [fechaConsulta, setFechaConsulta] = useState(obtenerFechaLocal);
+  const [terminoBusqueda, setTerminoBusqueda] = useState("");
 
   const fechasSemana = obtenerFechasSemana(fechaConsulta);
 
-  const citasFiltradas = ordenarCitas(citas).filter((cita) => {
+  const citasDelPeriodo = ordenarCitas(citas).filter((cita) => {
     if (tipoVista === "dia") {
       return cita.fecha === fechaConsulta;
     }
 
     return fechasSemana.includes(cita.fecha);
   });
+
+  const busquedaNormalizada = normalizarTexto(terminoBusqueda);
+
+  const citasFiltradas = citasDelPeriodo.filter((cita) => {
+    if (!busquedaNormalizada) {
+      return true;
+    }
+
+    const nombreCliente = normalizarTexto(cita.cliente.nombre);
+
+    return nombreCliente.includes(busquedaNormalizada);
+  });
+
+  const busquedaActiva = busquedaNormalizada.length > 0;
 
   return (
     <section className="agenda" aria-labelledby="titulo-agenda">
@@ -102,7 +125,10 @@ function AgendaCitas({
       </div>
 
       <div className="agenda__controles">
-        <div className="agenda__vistas" aria-label="Tipo de vista de la agenda">
+        <div
+          className="agenda__vistas"
+          aria-label="Tipo de vista de la agenda"
+        >
           <button
             type="button"
             className={tipoVista === "dia" ? "agenda__boton--activo" : ""}
@@ -132,6 +158,31 @@ function AgendaCitas({
             onChange={(evento) => setFechaConsulta(evento.target.value)}
           />
         </div>
+
+        <div className="agenda__busqueda">
+          <label htmlFor="busqueda-cliente">Buscar cliente</label>
+
+          <div className="agenda__busqueda-campo">
+            <input
+              id="busqueda-cliente"
+              type="search"
+              value={terminoBusqueda}
+              placeholder="Nombre completo o parcial"
+              autoComplete="off"
+              onChange={(evento) => setTerminoBusqueda(evento.target.value)}
+            />
+
+            {busquedaActiva && (
+              <button
+                type="button"
+                className="agenda__limpiar-busqueda"
+                onClick={() => setTerminoBusqueda("")}
+              >
+                Limpiar
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="agenda__periodo" aria-live="polite">
@@ -145,10 +196,35 @@ function AgendaCitas({
         )}
       </div>
 
+      {busquedaActiva && (
+        <div className="agenda__resultados" aria-live="polite">
+          <p>
+            {citasFiltradas.length === 1
+              ? "1 cita encontrada"
+              : `${citasFiltradas.length} citas encontradas`}{" "}
+            para “{terminoBusqueda.trim()}”.
+          </p>
+        </div>
+      )}
+
       {citasFiltradas.length === 0 ? (
         <div className="agenda__vacia" role="status">
-          <h3>No hay citas registradas</h3>
-          <p>No se encontraron reservaciones para el periodo seleccionado.</p>
+          {busquedaActiva ? (
+            <>
+              <h3>No se encontraron coincidencias</h3>
+              <p>
+                No hay clientes que coincidan con “{terminoBusqueda.trim()}” en
+                el periodo seleccionado.
+              </p>
+            </>
+          ) : (
+            <>
+              <h3>No hay citas registradas</h3>
+              <p>
+                No se encontraron reservaciones para el periodo seleccionado.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <div className="agenda__lista">
