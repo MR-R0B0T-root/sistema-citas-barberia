@@ -10,6 +10,7 @@ import { generarHorarios } from "./data/horarios";
 import { servicios } from "./data/servicios";
 import { enviarConfirmacionCita } from "./services/emailService";
 import { generarFolio } from "./utils/generarFolio";
+import { recuperarCitasDesdeTexto } from "./utils/validacionCitas";
 import "./App.css";
 
 const horarios = generarHorarios();
@@ -29,19 +30,9 @@ function obtenerFechaLocal() {
 }
 
 function obtenerCitasGuardadas() {
-  try {
-    const citasGuardadas = localStorage.getItem(CLAVE_CITAS);
+  const citasGuardadas = localStorage.getItem(CLAVE_CITAS);
 
-    if (!citasGuardadas) {
-      return [];
-    }
-
-    const citasConvertidas = JSON.parse(citasGuardadas);
-
-    return Array.isArray(citasConvertidas) ? citasConvertidas : [];
-  } catch {
-    return [];
-  }
+  return recuperarCitasDesdeTexto(citasGuardadas);
 }
 
 function App() {
