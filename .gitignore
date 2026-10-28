@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Registros brutos locales de pentesting
+evidencias-pentest/*.txt
