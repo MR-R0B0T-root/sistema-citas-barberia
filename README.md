@@ -18,11 +18,11 @@ Desarrollar una aplicación web adaptable que permita al cliente completar el pr
 
 - Sprint 1: terminado.
 - Sprint 2: terminado.
-- Sprint 3: en etapa de cierre.
+- Sprint 3: terminado.
 - BAR-09: terminada.
 - BAR-10: terminada.
 - BAR-11: terminada.
-- BAR-12: en revisión final como requisito transversal de diseño adaptable.
+- BAR-12: terminada.
 - Ajustes VITIUM-02 a VITIUM-05: corregidos e integrados en `main`.
 - Rama de trabajo actual: `feature/sprint-3`.
 
@@ -42,7 +42,7 @@ Desarrollar una aplicación web adaptable que permita al cliente completar el pr
 - Selección de fecha.
 - Restricción de fechas anteriores al día actual.
 - Validación de fechas introducidas manualmente.
-- Generación automática de horarios dentro de la jornada de 10:00 a 19:00.
+- Generación automática de horarios de inicio desde las 10:00, respetando el cierre de la jornada a las 19:00.
 - Selección visual de un horario.
 - Identificación de horarios no disponibles.
 
@@ -174,7 +174,7 @@ La aplicación no conserva citas canceladas en el historial porque BAR-08 elimin
 
 #### BAR-12 | Diseño adaptable
 
-BAR-12 se mantiene como requisito transversal del proyecto y se encuentra en revisión final.
+BAR-12 se completó como requisito transversal del proyecto mediante la revisión de las funcionalidades incorporadas durante los tres sprints.
 
 Durante los Sprints 1 y 2 se comprobaron:
 
@@ -201,7 +201,9 @@ Durante el Sprint 3 se incorporaron estilos adaptables para:
 - tarjetas del historial;
 - estados `Programada` y `Atendida`.
 
-La revisión final de BAR-12 debe cubrir sistemáticamente los anchos de 320, 375, 768, 1024 y 1440 píxeles antes de marcar la historia como terminada.
+La revisión final de BAR-12 cubrió sistemáticamente los anchos de 320, 375, 768, 1024 y 1440 píxeles, además de una prueba complementaria en un teléfono físico mediante el servidor de desarrollo expuesto en la red local.
+
+En las resoluciones evaluadas se revisaron las vistas de reservación, agenda e historial de clientes. También se comprobó la navegación, los formularios, la búsqueda por cliente, el filtro por servicio, la edición, la cancelación, las tarjetas de citas, los folios extensos y la ausencia de desplazamiento horizontal.
 
 ## Seguridad y robustez
 
@@ -553,7 +555,7 @@ gitleaks git . --redact
 - `89db8d9` | BAR-11 | Historial de clientes.
 - `394d349` | Aclaración del conteo de clientes y citas en BAR-11.
 
-Los commits documentales posteriores y el cierre de BAR-12 deberán agregarse cuando la revisión adaptable final quede terminada.
+La trazabilidad se completará con el commit documental de cierre y el merge final de `feature/sprint-3` en `main`.
 
 ## Limitaciones conocidas
 
@@ -586,15 +588,15 @@ Los commits documentales posteriores y el cierre de BAR-12 deberán agregarse cu
 - Implementar respaldo y recuperación de datos.
 - Administrar secretos mediante servicios del lado servidor.
 
-## Pendiente para el cierre del Sprint 3
+## Cierre del Sprint 3
 
-- Completar la matriz de revisión responsive de BAR-12.
-- Validar 320, 375, 768, 1024 y 1440 píxeles.
-- Corregir cualquier desbordamiento o problema de interacción encontrado.
-- Actualizar la trazabilidad con el commit de BAR-12.
-- Fusionar `feature/sprint-3` en `main`.
-- Actualizar este README con el estado final del proyecto.
-- Actualizar Trello y preparar la evidencia final de entrega.
+- BAR-09, BAR-10, BAR-11 y BAR-12 terminadas.
+- Revisión responsive completada en 320, 375, 768, 1024 y 1440 píxeles.
+- Prueba complementaria realizada en un teléfono físico.
+- 52 pruebas automatizadas aprobadas.
+- ESLint y build de producción aprobados.
+- 0 vulnerabilidades detectadas por `npm audit`.
+- 0 secretos detectados mediante Gitleaks.
 
 ## Autoría
 
