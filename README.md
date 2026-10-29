@@ -1,4 +1,4 @@
-# Sistema Web de Gestión de Citas para Barbería
+﻿# Sistema Web de Gestión de Citas para Barbería
 
 Aplicación web desarrollada con React y Vite para gestionar la reservación y administración de citas en una barbería.
 
@@ -24,7 +24,8 @@ Desarrollar una aplicación web adaptable que permita al cliente completar el pr
 - BAR-11: terminada.
 - BAR-12: terminada.
 - Ajustes VITIUM-02 a VITIUM-05: corregidos e integrados en `main`.
-- Rama de trabajo actual: `feature/sprint-3`.
+- Rama estable: `main`.
+- Sprint 3 integrado desde `feature/sprint-3`.
 
 ## Funcionalidades implementadas
 
@@ -554,8 +555,9 @@ gitleaks git . --redact
 - `ef7549d` | BAR-10 | Filtro por servicio.
 - `89db8d9` | BAR-11 | Historial de clientes.
 - `394d349` | Aclaración del conteo de clientes y citas en BAR-11.
-
-La trazabilidad se completará con el commit documental de cierre y el merge final de `feature/sprint-3` en `main`.
+- `25fa636` | Actualización integral de la documentación del Sprint 3.
+- `bf1a8b2` | Cierre documental de BAR-12 y Sprint 3.
+- `0b98344` | Integración final de las funcionalidades del Sprint 3 en `main`.
 
 ## Limitaciones conocidas
 
