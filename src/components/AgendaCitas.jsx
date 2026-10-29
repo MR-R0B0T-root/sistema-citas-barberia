@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { servicios } from "../data/servicios";
 
 function obtenerFechaLocal() {
   const hoy = new Date();
@@ -87,6 +88,7 @@ function AgendaCitas({
   const [tipoVista, setTipoVista] = useState("dia");
   const [fechaConsulta, setFechaConsulta] = useState(obtenerFechaLocal);
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
+  const [servicioSeleccionado, setServicioSeleccionado] = useState("");
 
   const fechasSemana = obtenerFechasSemana(fechaConsulta);
 
@@ -101,16 +103,24 @@ function AgendaCitas({
   const busquedaNormalizada = normalizarTexto(terminoBusqueda);
 
   const citasFiltradas = citasDelPeriodo.filter((cita) => {
-    if (!busquedaNormalizada) {
-      return true;
-    }
-
     const nombreCliente = normalizarTexto(cita.cliente.nombre);
 
-    return nombreCliente.includes(busquedaNormalizada);
+    const coincideCliente =
+      !busquedaNormalizada || nombreCliente.includes(busquedaNormalizada);
+
+    const coincideServicio =
+      !servicioSeleccionado || cita.servicio.id === servicioSeleccionado;
+
+    return coincideCliente && coincideServicio;
   });
 
   const busquedaActiva = busquedaNormalizada.length > 0;
+  const filtroServicioActivo = servicioSeleccionado.length > 0;
+  const filtrosActivos = busquedaActiva || filtroServicioActivo;
+
+  const servicioActivo = servicios.find(
+    (servicio) => servicio.id === servicioSeleccionado,
+  );
 
   return (
     <section className="agenda" aria-labelledby="titulo-agenda">
@@ -125,10 +135,7 @@ function AgendaCitas({
       </div>
 
       <div className="agenda__controles">
-        <div
-          className="agenda__vistas"
-          aria-label="Tipo de vista de la agenda"
-        >
+        <div className="agenda__vistas" aria-label="Tipo de vista de la agenda">
           <button
             type="button"
             className={tipoVista === "dia" ? "agenda__boton--activo" : ""}
@@ -157,6 +164,24 @@ function AgendaCitas({
             value={fechaConsulta}
             onChange={(evento) => setFechaConsulta(evento.target.value)}
           />
+        </div>
+
+        <div className="agenda__filtro-servicio">
+          <label htmlFor="filtro-servicio">Filtrar por servicio</label>
+
+          <select
+            id="filtro-servicio"
+            value={servicioSeleccionado}
+            onChange={(evento) => setServicioSeleccionado(evento.target.value)}
+          >
+            <option value="">Todos los servicios</option>
+
+            {servicios.map((servicio) => (
+              <option key={servicio.id} value={servicio.id}>
+                {servicio.nombre}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="agenda__busqueda">
@@ -196,25 +221,28 @@ function AgendaCitas({
         )}
       </div>
 
-      {busquedaActiva && (
+      {filtrosActivos && (
         <div className="agenda__resultados" aria-live="polite">
           <p>
             {citasFiltradas.length === 1
               ? "1 cita encontrada"
-              : `${citasFiltradas.length} citas encontradas`}{" "}
-            para “{terminoBusqueda.trim()}”.
+              : `${citasFiltradas.length} citas encontradas`}
+            {busquedaActiva && ` para “${terminoBusqueda.trim()}”`}
+            {filtroServicioActivo &&
+              ` en el servicio “${servicioActivo?.nombre ?? "seleccionado"}”`}
+            .
           </p>
         </div>
       )}
 
       {citasFiltradas.length === 0 ? (
         <div className="agenda__vacia" role="status">
-          {busquedaActiva ? (
+          {filtrosActivos ? (
             <>
               <h3>No se encontraron coincidencias</h3>
               <p>
-                No hay clientes que coincidan con “{terminoBusqueda.trim()}” en
-                el periodo seleccionado.
+                No hay citas que coincidan con los filtros aplicados en el
+                periodo seleccionado.
               </p>
             </>
           ) : (

@@ -5,6 +5,7 @@ import CatalogoServicios from "./components/CatalogoServicios";
 import ConfirmacionCita from "./components/ConfirmacionCita";
 import FormularioCita from "./components/FormularioCita";
 import FormularioEdicionCita from "./components/FormularioEdicionCita";
+import HistorialClientes from "./components/HistorialClientes";
 import SelectorHorario from "./components/SelectorHorario";
 import { generarHorarios } from "./data/horarios";
 import { servicios } from "./data/servicios";
@@ -125,40 +126,37 @@ function App() {
   }
 
   function solicitarCancelacionCita(cita) {
-  setCitaPorCancelar(cita);
-  setCitaEnEdicion(null);
-  setErrorEdicion("");
-  }
-
-  function confirmarCancelacionCita() {
-  if (!citaPorCancelar) {
-    return false;
-  }
-
-  const citasGuardadas = obtenerCitasGuardadas();
-
-  const citasActualizadas = citasGuardadas.filter(
-    (cita) => cita.id !== citaPorCancelar.id,
-  );
-
-  try {
-    localStorage.setItem(
-      CLAVE_CITAS,
-      JSON.stringify(citasActualizadas),
-    );
-  } catch {
-    return false;
-  }
-
-  setCitas(citasActualizadas);
-  setCitaPorCancelar(null);
-
-  if (citaEnEdicion?.id === citaPorCancelar.id) {
+    setCitaPorCancelar(cita);
     setCitaEnEdicion(null);
     setErrorEdicion("");
   }
 
-  return true;
+  function confirmarCancelacionCita() {
+    if (!citaPorCancelar) {
+      return false;
+    }
+
+    const citasGuardadas = obtenerCitasGuardadas();
+
+    const citasActualizadas = citasGuardadas.filter(
+      (cita) => cita.id !== citaPorCancelar.id,
+    );
+
+    try {
+      localStorage.setItem(CLAVE_CITAS, JSON.stringify(citasActualizadas));
+    } catch {
+      return false;
+    }
+
+    setCitas(citasActualizadas);
+    setCitaPorCancelar(null);
+
+    if (citaEnEdicion?.id === citaPorCancelar.id) {
+      setCitaEnEdicion(null);
+      setErrorEdicion("");
+    }
+
+    return true;
   }
 
   function actualizarCita(datosEdicion) {
@@ -307,9 +305,28 @@ function App() {
         >
           Administrar agenda
         </button>
-      </nav>
+         <button
+        type="button"
+        className={
+          vistaActiva === "historial"
+            ? "app__navegacion-boton app__navegacion-boton--activo"
+            : "app__navegacion-boton"
+        }
+        aria-pressed={vistaActiva === "historial"}
+        onClick={() => {
+          setVistaActiva("historial");
+          setCitaEnEdicion(null);
+          setCitaPorCancelar(null);
+          setErrorEdicion("");
+        }}
+      >
+        Historial de clientes
+      </button>
+       </nav>
 
-      {vistaActiva === "agenda" ? (
+      {vistaActiva === "historial" ? (
+        <HistorialClientes citas={citas} />
+      ) : vistaActiva === "agenda" ? (
         <>
           <AgendaCitas
             citas={citas}
