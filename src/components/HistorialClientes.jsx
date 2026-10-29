@@ -58,6 +58,12 @@ function HistorialClientes({ citas }) {
         </p>
       </div>
 
+      <div className="historial__resumen-general" aria-live="polite">
+        <p>
+          {clientes.length} clientes únicos · {citas.length} citas registradas
+        </p>
+      </div>
+
       <div className="historial__selector">
         <label htmlFor="cliente-historial">Cliente registrado</label>
 
